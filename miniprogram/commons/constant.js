@@ -1,3 +1,11 @@
+const shipOpsCom = {
+  iconClass: '',
+  isInput: true,
+  canShow: true,
+  iconmore: false,
+  readonly: false,
+  value: ''
+}
 // 个人中心
 export const homelist = [
   {
@@ -44,12 +52,14 @@ export const userOps = [
     id: 1,
     title: '姓名：',
     iconClass: '',
+    placeholder: '请输入姓名',
     isInput: true,
     canShow: true,
     iconmore: false,
     readonly: false,
-    value: '马化腾',
-    maxlength: 10
+    value: '',
+    maxlength: 10,
+    attrKey: 'userName'
   },
   {
     id: 2,
@@ -61,64 +71,97 @@ export const userOps = [
     readonly: true,
     value: '',
     maxlength: 2,
-    isSlot: true
+    isSlot: true,
+    attrKey: 'sex'
   },
   {
     id: 3,
     title: '电子邮箱：',
+    placeholder: '请输入电子邮箱',
     iconClass: '',
     isInput: true,
     canShow: true,
     iconmore: false,
     readonly: true,
-    value: 'mahuaten@tuhu.cn',
+    value: '',
     maxlength: 50,
-    inputtype: 'text'
+    inputtype: 'text',
+    attrKey: 'email'
   },
   {
     id: 4,
     title: '电话：',
     iconClass: '',
+    placeholder: '请输入电话号码',
     isInput: true,
     canShow: true,
     iconmore: false,
     readonly: true,
-    value: '18888888888',
+    value: '',
     maxlength: 11,
-    inputtype: 'number'
+    inputtype: 'number',
+    attrKey: 'mobile'
   },
   {
     id: 5,
     title: '所属部门：',
     iconClass: '',
+    placeholder: '请输入所属部门',
     isInput: true,
     canShow: true,
     iconmore: false,
     readonly: true,
-    value: '腾讯总部董事会',
-    maxlength: 50
+    value: '',
+    maxlength: 50,
+    attrKey: 'department'
   },
   {
     id: 6,
     title: '登录用户名：',
     iconClass: '',
+    placeholder: '请输入登录用户名',
     isInput: true,
     canShow: true,
     iconmore: false,
     readonly: true,
-    value: 'mahuaten',
-    maxlength: 20
+    value: '',
+    maxlength: 20,
+    attrKey: 'userCode'
   },
   {
     id: 7,
-    title: '角色类型：',
+    title: '初始密码：',
     iconClass: '',
+    placeholder: '请输入初始密码',
     isInput: true,
     canShow: true,
     iconmore: false,
     readonly: true,
-    value: '管理员',
-    maxlength: 20
+    value: '',
+    maxlength: 20,
+    attrKey: 'password'
+  },
+  {
+    id: 8,
+    title: '角色类型：',
+    iconClass: '',
+    isInput: false,
+    canShow: true,
+    iconmore: false,
+    readonly: true,
+    value: '',
+    maxlength: 10,
+    isSlot: true,
+    attrKey: 'roleId'
+  },
+  {
+    id: 9,
+    title: '船舶权限：',
+    iconClass: '',
+    isInput: false,
+    canShow: true,
+    iconmore: true,
+    attrKey: 'userShipIds'
   }
 ]
 
@@ -134,7 +177,8 @@ export const passwords = [
     placeholder: '请输入旧密码',
     value: '',
     maxlength: 20,
-    password: true
+    password: true,
+    attrKey: 'oldPassword'
   },
   {
     id: 2,
@@ -146,7 +190,8 @@ export const passwords = [
     placeholder: '请输入新密码',
     value: '',
     maxlength: 20,
-    password: true
+    password: true,
+    attrKey: 'password'
   },
   {
     id: 3,
@@ -158,7 +203,8 @@ export const passwords = [
     placeholder: '请再次输入新密码',
     value: '',
     maxlength: 20,
-    password: true
+    password: true,
+    attrKey: 'repeatPassword'
   }
 ]
 
@@ -166,6 +212,19 @@ export const passwords = [
 export const fishType = [
   {
     id: 1,
+    title: '监测日期：',
+    iconClass: '',
+    isInput: false,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    value: '',
+    maxlength: 15,
+    isSlot: true,
+    attrKey: 'surveyTime'
+  },
+  {
+    id: 2,
     title: '种类：',
     isInput: true,
     canShow: true,
@@ -173,10 +232,11 @@ export const fishType = [
     readonly: false,
     placeholder: '鱼种',
     value: '',
-    maxlength: 20
+    maxlength: 20,
+    attrKey: 'fish_kind'
   },
   {
-    id: 2,
+    id: 3,
     title: '数量：',
     isInput: true,
     canShow: true,
@@ -185,10 +245,11 @@ export const fishType = [
     placeholder: '单位:尾',
     value: '',
     maxlength: 20,
-    inputtype: 'number'
+    inputtype: 'digit',
+    attrKey: 'fish_count'
   },
   {
-    id: 3,
+    id: 4,
     title: '重量：',
     isInput: true,
     canShow: true,
@@ -197,28 +258,31 @@ export const fishType = [
     placeholder: '单位:kg',
     value: '',
     maxlength: 20,
-    inputtype: 'digit'
-  },
-  {
-    id: 4,
-    title: '记录人：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '请输入旧密码',
-    value: '马化腾',
-    maxlength: 20
+    inputtype: 'digit',
+    attrKey: 'fish_weight'
   },
   {
     id: 5,
+    title: '记录人：',
+    isInput: true,
+    canShow: false,
+    iconmore: false,
+    readonly: false,
+    placeholder: '请输入旧密码',
+    value: '',
+    maxlength: 20,
+    attrKey: 'createByName'
+  },
+  {
+    id: 6,
     title: '记录时间：',
     isInput: false,
-    canShow: true,
+    canShow: false,
     iconmore: false,
     readonly: false,
     value: '',
-    maxlength: 20
+    maxlength: 20,
+    attrKey: 'surveyTime'
   }
 ]
 
@@ -226,6 +290,19 @@ export const fishType = [
 export const initType = [
   {
     id: 1,
+    title: '监测日期：',
+    iconClass: '',
+    isInput: false,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    value: '',
+    maxlength: 15,
+    isSlot: true,
+    attrKey: 'surveyTime'
+  },
+  {
+    id: 2,
     title: '鱼卵数：',
     isInput: true,
     canShow: true,
@@ -234,10 +311,11 @@ export const initType = [
     placeholder: '单位:粒',
     value: '',
     maxlength: 10,
-    inputtype: 'number'
+    inputtype: 'number',
+    attrKey: 'spawn_count'
   },
   {
-    id: 2,
+    id: 3,
     title: '鱼苗数：',
     isInput: true,
     canShow: true,
@@ -246,10 +324,11 @@ export const initType = [
     placeholder: '单位:尾',
     value: '',
     maxlength: 10,
-    inputtype: 'number'
+    inputtype: 'number',
+    attrKey: 'fries_count'
   },
   {
-    id: 3,
+    id: 4,
     title: '采集网次：',
     isInput: true,
     canShow: true,
@@ -258,10 +337,11 @@ export const initType = [
     placeholder: '单位:次',
     value: '',
     maxlength: 10,
-    inputtype: 'number'
+    inputtype: 'number',
+    attrKey: 'net_count'
   },
   {
-    id: 4,
+    id: 5,
     title: '单位采集网次时间：',
     isInput: true,
     canShow: true,
@@ -270,28 +350,31 @@ export const initType = [
     placeholder: '单位:分钟',
     value: '',
     maxlength: 10,
-    inputtype: 'number'
-  },
-  {
-    id: 5,
-    title: '记录人：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '马化腾',
-    maxlength: 20
+    inputtype: 'number',
+    attrKey: 'net_period'
   },
   {
     id: 6,
+    title: '记录人：',
+    isInput: true,
+    canShow: false,
+    iconmore: false,
+    readonly: false,
+    
+    value: '',
+    maxlength: 20,
+    attrKey: 'createByName'
+  },
+  {
+    id: 7,
     title: '记录时间：',
     isInput: false,
-    canShow: true,
+    canShow: false,
     iconmore: false,
     readonly: false,
     value: '',
-    maxlength: 20
+    maxlength: 20,
+    attrKey: 'surveyTime'
   }
 ]
 
@@ -299,101 +382,226 @@ export const initType = [
 export const environmentType = [
   {
     id: 1,
-    title: '水质因子：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '',
-    maxlength: 10
-  },
-  {
-    id: 2,
-    title: '浮游植物：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '',
-    maxlength: 100
-  },
-  {
-    id: 3,
-    title: '浮游动物：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '',
-    maxlength: 100
-  },
-  {
-    id: 4,
-    title: '低栖动物：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '',
-    maxlength: 100
-  },
-  {
-    id: 5,
-    title: '周丛生物：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '',
-    maxlength: 100
-  },
-  {
-    id: 6,
-    title: '漂浮生物：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '',
-    maxlength: 100
-  },
-  {
-    id: 7,
-    title: '水生植物：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '',
-    maxlength: 100
-  },
-  {
-    id: 8,
-    title: '记录人：',
-    isInput: true,
-    canShow: true,
-    iconmore: false,
-    readonly: false,
-    placeholder: '',
-    value: '马化腾',
-    maxlength: 20
-  },
-  {
-    id: 9,
-    title: '记录时间：',
+    title: '监测日期：',
+    iconClass: '',
     isInput: false,
     canShow: true,
     iconmore: false,
     readonly: false,
     value: '',
-    maxlength: 20
+    maxlength: 15,
+    isSlot: true,
+    attrKey: 'surveyTime'
+  },
+  {
+    id: 2,
+    title: '水质因子：',
+    placeholder: '请输入水质因子',
+    isInput: true,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    
+    value: '',
+    maxlength: 200,
+    attrKey: 'water_quality_factors'
+  },
+  {
+    id: 3,
+    title: '浮游植物：',
+    placeholder: '请输入浮游植物',
+    isInput: true,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    
+    value: '',
+    maxlength: 100,
+    attrKey: 'neuston'
+  },
+  {
+    id: 4,
+    title: '浮游动物：',
+    placeholder: '请输入浮游动物',
+    isInput: true,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    
+    value: '',
+    maxlength: 100,
+    attrKey: 'zooplankton'
+  },
+  {
+    id: 6,
+    title: '低栖动物：',
+    placeholder: '请输入低栖动物',
+    isInput: true,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    
+    value: '',
+    maxlength: 100,
+    attrKey: 'zoobenthos'
+  },
+  {
+    id: 6,
+    title: '周丛生物：',
+    placeholder: '请输入周丛生物',
+    isInput: true,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    
+    value: '',
+    maxlength: 100,
+    attrKey: 'periphyton'
+  },
+  {
+    id: 7,
+    title: '漂浮生物：',
+    placeholder: '请输入漂浮生物',
+    isInput: true,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    value: '',
+    maxlength: 100,
+    attrKey: 'hytoplankton'
+  },
+  {
+    id: 8,
+    title: '水生植物：',
+    placeholder: '请输入水生植物',
+    isInput: true,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    
+    value: '',
+    maxlength: 100,
+    attrKey: 'hydrophyte'
+  },
+  {
+    id: 9,
+    title: '记录人：',
+    isInput: true,
+    canShow: false,
+    iconmore: false,
+    readonly: false,
+    
+    value: '马化腾',
+    maxlength: 20,
+    attrKey: 'createByName'
+  },
+  {
+    id: 10,
+    title: '记录时间：',
+    isInput: false,
+    canShow: false,
+    iconmore: false,
+    readonly: false,
+    value: '',
+    maxlength: 20,
+    attrKey: 'surveyTime'
+  }
+]
+
+// 船舶
+export const shipOps = [
+  {
+    id: 1,
+    title: '名称：',
+    maxlength: 50,
+    attrKey: 'shipName',
+    placeholder: '请输入科考船名称',
+    ...shipOpsCom
+  },
+  {
+    id: 2,
+    title: '编号：',
+    placeholder: '请输入科考船编号',
+    maxlength: 50,
+    attrKey: 'shipCode',
+    ...shipOpsCom
+  },
+  {
+    id: 3,
+    title: '码头：',
+    placeholder: '请输入码头名称',
+    maxlength: 50,
+    attrKey: 'dockName',
+    ...shipOpsCom
+  },
+  {
+    id: 4,
+    title: '备用码头：',
+    placeholder: '请输入备用码头名称',
+    maxlength: 50,
+    attrKey: 'spareDockName',
+    ...shipOpsCom
+  },
+  {
+    id: 5,
+    title: '责任人：',
+    placeholder: '请输入责任人名称',
+    maxlength: 20,
+    attrKey: 'chargePerson',
+    ...shipOpsCom
+  },
+  {
+    id: 6,
+    title: '责任人电话：',
+    placeholder: '请输入责任人电话',
+    maxlength: 11,
+    attrKey: 'chargePersonMobile',
+    ...shipOpsCom
+  },
+  {
+    id: 7,
+    title: '船长姓名：',
+    placeholder: '请输入船长名称',
+    maxlength: 10,
+    attrKey: 'captain',
+    ...shipOpsCom
+  },
+  {
+    id: 8,
+    title: '船长电话：',
+    placeholder: '请输入船长电话',
+    maxlength: 11,
+    attrKey: 'captainMobile',
+    ...shipOpsCom
+  },
+  {
+    id: 9,
+    title: 'GPS设备识别号：',
+    placeholder: '请输入GPS设备识别号',
+    maxlength: 30,
+    attrKey: 'gpsNumber',
+    ...shipOpsCom
+  },
+  {
+    id: 10,
+    title: 'GPS设备手机号：',
+    placeholder: '请输入GPS设备手机号：',
+    maxlength: 11,
+    attrKey: 'gpsMobile',
+    ...shipOpsCom
+  },
+  {
+    id: 11,
+    title: '船舶状态：',
+    maxlength: 5,
+    attrKey: 'status',
+    isSlot: true,
+    iconClass: '',
+    isInput: false,
+    canShow: true,
+    iconmore: false,
+    readonly: false,
+    value: ''
   }
 ]
 

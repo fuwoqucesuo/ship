@@ -1,5 +1,9 @@
 const com = require('../../commons/constant') 
 const util = require('../../commons/utils')
+const websocket = require('../../commons/websocket')
+const { apis, userAuthKey, openidKey, userInfoKey, apiHost } = require('../../commons/config')
+const { getUserInfo, getFollowShipPoint, getShipHistory } = require('../../commons/sApi')
+// const icon = require('../../images/current.png')
 const app = getApp()
 Page({
 
@@ -7,110 +11,32 @@ Page({
    * 页面的初始数据
    */
   data: {
-    title: '未知',
-    latitude: 37.48205260,
-    longitude: 121.44577861,
-    markers: [
-      {
-        id: 1,
-        longitude: 121.44597861,
-        latitude: 37.48515260,
-        zIndex: 10,
-        iconPath: '../../images/current.png',
-        width: 20,
-        height: 20,
-        callout: {
-          color: "#FFFFFF",
-          content: '长江一号',
-          display: 'ALWAYS',
-          bgColor: '#9a9341',
-          borderRadius: 5
-        }
-      },
-      {
-        id: 2,
-        longitude: 121.44577861,
-        latitude: 37.48405260,
-        zIndex: 10,
-        iconPath: '../../images/current.png',
-        width: 20,
-        height: 30,
-        callout: {
-          color: "#FFFFFF",
-          content: '长江二号',
-          display: 'ALWAYS',
-          bgColor: '#9a9341',
-          borderRadius: 5
-        }
-      },
-      {
-        id: 3,
-        longitude: 121.44507861,
-        latitude: 37.48499260,
-        zIndex: 10,
-        iconPath: '../../images/current.png',
-        width: 20,
-        height: 20,
-        callout: {
-          color: "#FFFFFF",
-          content: '长江三号',
-          display: 'ALWAYS',
-          bgColor: '#9a9341',
-          borderRadius: 5
-        }
-      },
-      {
-        id: 4,
-        longitude: 121.44577861,
-        latitude: 37.48205260,
-        zIndex: 10,
-        iconPath: '../../images/start.png',
-        width: 30,
-        height: 30
-      },
-      {
-        id: 5,
-        longitude: 121.44748986,
-        latitude: 37.48299336,
-        zIndex: 10,
-        iconPath: '../../images/current.png',
-        width: 20,
-        height: 20,
-        callout: {
-          color: "#FFFFFF",
-          content: '南极科考1号',
-          display: 'ALWAYS',
-          bgColor: '#9a9341',
-          borderRadius: 5
-        }
+    title: '首页',
+    baseMorkerItem: {
+      id: 0,
+      zIndex: 10,
+      iconPath: '../../images/current.png',
+      width: 20,
+      height: 20,
+      callout: {
+        color: "#FFFFFF",
+        content: '',
+        display: 'ALWAYS',
+        bgColor: '#9a9341',
+        borderRadius: 5
       }
-    ],
+    },
+    longitude: 0,
+    latitude: 0,
+    markers: [],
     polyline: [{
-      points: [{
-          longitude: 121.44577861,
-          latitude: 37.48205260
-        }, {
-          longitude: 121.44611657,
-          latitude: 37.48207388
-        }, {
-          longitude: 121.44725382,
-          latitude: 37.48224841
-        }, {
-          longitude: 121.44766152,
-          latitude: 37.48237186
-        },{
-          longitude: 121.4475274100,
-          latitude: 37.4827039000
-        },{
-          longitude: 121.44748986,
-          latitude: 37.48299336
-        }
-      ],
+      points: [],
       color: "#33c9FF",
-      width: 3,
+      width: 5,
       dottedLine: false,
       arrowLine: true
-    }]
+    }],
+    followShipId: 0
   },
   addMonitor() {
     wx.navigateTo({
@@ -124,40 +50,93 @@ Page({
     const _that = this
     if (!app.globalData.token) {
       _that.onLogin()
-    } else {
-    util.promisify(wx.showModal, {
-      title: '提示',
-      content: '您暂无船只权限，请联系管理员',
-      showCancel: false,
-      confirmText: '知道了'
-    }).then(res => {
-      if (res.confirm) {
-        console.log('用户点了ok')
-      }
-    })
     }
   },
   async getOpenidAndToken(code) {
     const _that = this
-    const _url = `${app.globalData.api_host}/ship-api/api/user/findOpenId`
+    const _url = `${apiHost}${apis.getOpenidAndToken}`
     const param = {
       code
     }
     const userInfo = await wx.sRequest(_url, param, {
       isLoading: true,
       noAuth: true
-    })
-    const { token } = userInfo || {}
-    app.globalData.token = token
+    }).catch(() => {})
+    const { token, openid } = userInfo || {}
+    util.setStorageSync(userAuthKey, token)
+    util.setStorageSync(openidKey, openid)
     if (!token) {
-      wx.$eventBus.$on('sLogin', (res) => {
-        console.log('sLogin back', res)
-        _that.realtimeGetLocation()
+      wx.$eventBus.$on('login_success', (token) => {
+        _that.getCurrentUser()
       })
       wx.navigateTo({
         url: '/pages/home/login/index'
       })
+    } else {
+      _that.getCurrentUser()
     }
+  },
+  getCurrentShipPoint() {
+    const _that = this
+    const _user = util.getStorageSync(userInfoKey)
+    if (_user && _user.followShipId) {
+      _that.setData({
+        followShipId: _user.followShipId
+      })
+      getFollowShipPoint(_user.followShipId).then(res => {
+        const { spotList, shipName } = res || {}
+        _that.setData({
+          title: shipName
+        })
+        if (spotList && spotList.length > 0) {
+          const { longitude, latitude } = spotList[0]
+          _that.setData({
+            longitude,
+            latitude,
+            ['polyline[0].points']: spotList
+          })
+        }
+      })
+    } else {
+      util.promisify(wx.showModal, {
+        title: '提示',
+        content: '您暂无船只权限，请联系管理员',
+        showCancel: false,
+        confirmText: '知道了'
+      }).then(res => {
+        if (res.confirm) {
+          console.log('用户点了ok')
+        }
+      })
+    }
+  },
+  async getCurrentUser() {
+    const _that = this
+    const user = await getUserInfo()
+    const { latitude, longitude } = await util.promisify(wx.getLocation, {})
+    this.setData({
+      latitude,
+      longitude
+    })
+    util.setStorageSync(userInfoKey, user)
+    getShipHistory().then(res => {
+      _that.setData({
+        markers: _that.shipMarkerData(res) || []
+      })
+    })
+    _that.getCurrentShipPoint()
+    this.acceptLocationData(user.pkid)
+    return user
+  },
+  shipMarkerData(list) {
+    const _that = this
+    const _markerItem = _that.data.baseMorkerItem
+    return list.map((x ,index) => {
+      const item = Object.assign(_markerItem, x)
+      item.callout.content = x.shipName
+      item.id = index
+      return item
+    })
   },
   onLogin() {
     const _that = this
@@ -168,42 +147,26 @@ Page({
       _that.getOpenidAndToken(code)
     })
   },
-  realtimeGetLocation() {
-    const _that = this
-    const _locations = [
-      {
-        longitude: 121.4476454300,
-        latitude: 37.4831679000
-      },{
-        longitude: 121.4478063600,
-        latitude: 37.4831381000
-      },{
-        longitude: 121.4479565600,
-        latitude: 37.4831295800
-      },{
-        longitude: 121.4480263000,
-        latitude: 37.4831636400
-      },{
-        longitude: 121.44820869,
-        latitude: 37.48330837
+  acceptLocationData(sid){
+    let _that = this
+    const followShipId = _that.data.followShipId
+    websocket.ws_connect(sid,(data)=>{
+      const ships = (data || []).filter(x => x.shipId === followShipId)
+      if (ships && ships.length > 0) {
+        const { longitude, latitude } = ships[0]
+        const _spotList = _that.data.polyline[0].points
+        _spotList.push({ longitude, latitude })
+        _that.setData({
+          longitude,
+          latitude,
+          ['polyline[0].points']: _spotList,
+          markers: _that.shipMarkerData(data)
+        })
+      } else {
+        _that.setData({
+          markers: _that.shipMarkerData(data)
+        })
       }
-    ]
-    let index = 0
-    const timer = setInterval(() => {
-      if (index >= _locations.length) {
-        clearInterval(timer)
-        return
-      }
-      const _points = _that.data.polyline[0].points
-      const currentLocat = _locations[index]
-      const _markers = _that.data.markers
-      const lastmarker = `markers[${_markers.length - 1}]`
-      _points.push(_locations[index])
-      _that.setData({
-        ['polyline[0].points']: _points,
-        [lastmarker]: Object.assign(_markers[_markers.length - 1], currentLocat)
-      })
-      index++
-    }, 2000);
+    })
   }
 })

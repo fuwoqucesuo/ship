@@ -1,25 +1,85 @@
-// miniprogram/pages/personcenter/user/usermanager.js
+const { getUsers } = require('../../../commons/sApi')
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    pageIndex: 1,
+    pageSize: 100,
+    userName: '',
+    userList: null,
+    isloading: true
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    wx.showLoading({
+      title: '加载中...',
+    })
+    this.getUserList()
+  },
+  async getUserList() {
+    const _that = this
+    const { pageIndex, pageSize, userName } = this.data
+    const result = await getUsers({
+      pageNum: pageIndex,
+      pageSize,
+      userName
+    })
+    const { records } = result || {}
+    wx.hideLoading()
+    _that.setData({
+      isloading: false,
+      userList: (records || []).map(x => {
+        const arr = (x.userName || '').split('');
+        x.surname = arr.length > 0 ? arr[0] : ''
+        return x
+      })
+    })
   },
   handlerGobackClick() {
-    wx.$eventBus.$emit('aaaaa', {
-      aaa: 'aaa12'
-    })
     wx.navigateBack({
       delta: 1
+    })
+  },
+  addUser() {
+    const _that = this
+    wx.$eventBus.$on('add_success', (obj) => {
+      _that.resetData()
+      _that.getUserList()
+    })
+    wx.navigateTo({
+      url: `/pages/personcenter/detail/detail`
+    });
+  },
+  onUserClick(e) {
+    const _user = e.detail
+    wx.navigateTo({
+      url: `/pages/personcenter/detail/detail?pkid=${_user.pkid}&isEdit=true`
+    });
+  },
+  onClearSearch() {
+    this.resetData()
+    this.setData({
+      userName: ''
+    })
+    this.getUserList()
+  },
+  onSearchConfirm(e) {
+    this.resetData()
+    this.setData({
+      userName: e.detail
+    })
+    this.getUserList()
+  },
+  resetData() {
+    this.setData({
+      pageIndex: 1,
+      userName: '',
+      userList: []
     })
   },
   /**

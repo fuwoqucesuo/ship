@@ -1,5 +1,7 @@
 // pages/track/index.js
 const uitl = require('../../commons/utils');
+const { calculateTrackInfo } = require('../../commons/sApi')
+const { findCurrentTrack } = require('../../commons/sApi')
 Page({
 
   /**
@@ -9,17 +11,58 @@ Page({
     currentIndex: 0,
     tabs: ['自定义', '总计'],
     swiperHeight: '',
-    startDate: '',
-    endDate: '',
+    startDate: '2020-06-20',
+    endDate: uitl.formatTime(new Date(), '-', false),
     currentDate: uitl.formatTime(new Date(), '-', false),
-    voyages: [1, 2, 3, 4, 5]
+    totalMileage: 0,
+    totalTrackCount: 0,
+    totalMonitoringCount: 0,
+    showDate: '',
+    voyages: [],
+    totalTrack: {
+      totalMileage: 0,
+      totalTrackCount: 0,
+      totalMonitoringCount: 0
+    }
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    this.initFn(true)
+  },
+  initFn(isInit) {
+    calculateTrackInfo({
+      startDate: this.data.startDate,
+      endDate: this.data.endDate
+    }).then(res => {
+      const { totalMileage, totalTrackCount, totalMonitoringCount } = res || {}
+      this.setData({
+        totalMileage,
+        totalTrackCount,
+        totalMonitoringCount
+      })
+      if (isInit) {
+        this.setData({
+          totalTrack: {
+            totalMileage,
+            totalTrackCount,
+            totalMonitoringCount
+          }
+        })
+      }
+    })
+    this.getCurrentTrack();
+  },
+  getCurrentTrack(){
+    findCurrentTrack().then(res => {
+      const {showDate,shipTrackList} = res || {}
+      this.setData({
+        showDate,
+        voyages: shipTrackList
+      })
+    })		
   },
   moreVoyage() {
     wx.navigateTo({
@@ -37,11 +80,9 @@ Page({
       })
       return
     }
-    
     if (this.data.endDate) {
       const _startDate = +(new Date(value))
       const _endDate = +(new Date(this.data.endDate))
-      console.log(_startDate, _endDate)
       if (_startDate > _endDate) {
         this.setData({
           endDate: ''
@@ -52,6 +93,13 @@ Page({
     this.setData({
       [_type]: value
     })
+    this.initFn()
+  },
+  onVoyageClick(e) {
+    const item = e.detail
+    wx.navigateTo({
+      url: `/pages/voyage/detail/index?id=${item.pkid}`
+    });
   },
   getSwiperHeight() {
 
