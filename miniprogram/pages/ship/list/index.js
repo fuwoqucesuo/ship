@@ -141,6 +141,7 @@ Page({
   },
   refreshShip() {
     wx.$eventBus.$emit('refresh_ship')
+    wx.$eventBus.$emit('refresh_center')
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

@@ -1,5 +1,7 @@
 const com = require('../../../commons/constant');
-const { updatePassWord } = require('../../../commons/sApi')
+const { updatePassWord, userLogout } = require('../../../commons/sApi')
+const { userInfoKey, userAuthKey, openidKey } = require('../../../commons/config')
+const { removeStorageSync, getStorageSync } = require('../../../commons/utils')
 Page({
 
   /**
@@ -33,13 +35,25 @@ Page({
       return
     }
     const result = await updatePassWord(_param)
-    result && this.handlerGobackClick()
+    result && this.cleanUpUserCache()
+  },
+  async cleanUpUserCache() {
+    const userToken = getStorageSync(userAuthKey)
+    const openid = getStorageSync(openidKey)
+    const result = await userLogout(userToken, openid)
+    if (result) {
+      removeStorageSync(userInfoKey)
+      removeStorageSync(userAuthKey)
+      wx.switchTab({
+        url: '/pages/realtime/index'
+      })
+      wx.$eventBus.$emit('refresh_ship')
+    }
   },
   onInputChange(e) {
     const _that = this
     const cells = _that.data.passwords
     const item = e.detail
-    console.log(e)
     _that.setData({
       passwords: cells.map(x => {
         if (x.attrKey === item.attrKey) {

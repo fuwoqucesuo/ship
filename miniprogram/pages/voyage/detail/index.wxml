@@ -42,7 +42,7 @@
                   <text class="gauging-type">{{item.resourceTypeName}}</text>
                   <text>{{item.createByName}}</text>
                 </view>
-                <view class="gauging-time">{{item.surveyTime}}</view>
+                <view class="gauging-time">{{item.createdTimeFormat}}</view>
               </view>
               <text  class="s-icon iconmore"></text>
             </view>

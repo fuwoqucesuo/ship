@@ -23,7 +23,21 @@ const formatNumber = n => {
   n = n.toString()
   return n[1] ? n : '0' + n
 }
-      
+
+ const fixDate = (strTime) => {
+  if (!strTime) {
+      return '';
+  }
+  var tempDate = new Date(strTime+'+0800');
+  if(tempDate=='Invalid Date'){
+     strTime = strTime.replace(/T/g,' ');
+     strTime = strTime.replace(/-/g,'/');
+     tempDate = new Date(strTime+'+0800');
+  }
+  tempDate.toLocaleDateString();
+  return tempDate;
+}
+
 /**
  * 将方法promise化替换 'fail', 'success'
  * @param {*} method 
@@ -152,5 +166,6 @@ module.exports = {
   setStorageSync,
   getStorageSync,
   removeStorageSync,
-  verifyPhone
+  verifyPhone,
+  fixDate
 }

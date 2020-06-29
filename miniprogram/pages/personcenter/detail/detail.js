@@ -18,7 +18,7 @@ Page({
     isHead: false,
     isEdit: false,
     isloading: true,
-    sexs: ['男士', '女士'],
+    sexs: ['男', '女'],
     sexIndex: 0,
     userPkid: 0,
     user: null,
@@ -64,6 +64,9 @@ Page({
         cells: cells.map(x => {
           x.value = ''
           x.readonly = false
+          if (x.attrKey === 'userShipIds' && this.data.roleIndex === 0) {
+            x.canShow = false
+          }
           return x
         })
       })
@@ -75,9 +78,11 @@ Page({
     const _userDetail = await getCurrentUserDetail(_that.data.userPkid)
     const cells = _that.data.cells
     const _index = this.data.sexs.indexOf(_userDetail.sex)
+    const _roleIndex = this.data.roles.map(x => x.pkid).indexOf(_userDetail.roleId)
     _that.setData({
       isloading: false,
-      sexIndex: _index,
+      sexIndex: _index > -1 ? _index : 0 ,
+      roleIndex: _roleIndex,
       cells: cells.map(x => {
         x.value = _userDetail[x.attrKey]
         x.readonly = !isEdit
@@ -85,12 +90,14 @@ Page({
         return x
       })
     })
+    this.changeuUserShips(_roleIndex)
     wx.hideLoading()
   },
   onCellContentClick(e) {
     const _that = this
     const { id } = e.detail || {}
-    if (id === 9 && this.data.isEdit) {
+    // && this.data.isEdit
+    if (id === 9) {
       wx.$eventBus.$on('working_success', (res) => {
         _that.setData({
           workingShips: res
@@ -130,7 +137,7 @@ Page({
       const userToken = getStorageSync(userAuthKey)
       const openid = getStorageSync(openidKey)
       const result = await userLogout(userToken,openid)
-      if (result || 1 === 1) {
+      if (result) {
         this.cleanUpUserCache()
       }
     }
@@ -161,7 +168,21 @@ Page({
       sexIndex: e.detail.value
     })
   },
+  changeuUserShips(index) {
+    const cells = this.data.cells
+    // 管理员隐藏船舶权限
+    this.setData({
+      cells: cells.map(x => {
+        if (x.attrKey === 'userShipIds') {
+          x.canShow = parseInt(index) !== 0
+        }
+        return x
+      })
+    })
+  },
   rolePickerChange(e) {
+    const _index = e.detail.value
+    this.changeuUserShips(_index)
     this.setData({
       roleIndex: e.detail.value
     })

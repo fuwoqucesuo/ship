@@ -9,7 +9,7 @@ Page({
    */
   data: {
     username: 'admin110',
-    password: 'surveyship$2020',
+    password: '123456',
     logoUrl: 'https://www.orangesoda.cn/ship-api/images/ba67ad77-18be-4a27-b8e9-7e29a39b8770.jpeg'
   },
 
@@ -72,12 +72,16 @@ Page({
         loadingTitle: '登录中...',
         method: 'POST',
         noAuth: true
-      }).catch(() => {})
-      setStorageSync(userAuthKey, access_token)
-      wx.$eventBus.$emit('login_success', access_token)
-      wx.navigateBack({
-        delta: 1
+      }).catch((res) => {
+        wx.showToast({ title: res.message, icon: 'none' })
       })
+      if (access_token) {
+        setStorageSync(userAuthKey, access_token)
+        wx.$eventBus.$emit('login_success', access_token)
+        wx.navigateBack({
+          delta: 1
+        })
+      }
     }
     // setTimeout(() => {
     //   wx.hideLoading()

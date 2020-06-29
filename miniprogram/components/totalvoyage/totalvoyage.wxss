@@ -1,24 +1,42 @@
 .total-voyage {
   width: 100%;
   padding: 20rpx 0;
+  display: flex;
+  flex-direction: column;
 }
-.total-voyage .voyage-info {
-  margin: 16rpx 0;
+.total-voyage .top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #666666;
 }
-.total-voyage .voyage-info .voyage {
-  font-size: 60rpx;
-  margin-right: 6rpx;
-  color: #7dc5eb;
+.total-voyage .totalMileage {
+  height: 150rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80rpx;
+  color: #333333;
   font-weight: 500;
 }
 .total-voyage .detail {
-  margin-top: 20rpx;
+  height: 100rpx;
+  display: flex;
+  justify-content: space-between;
 }
 .total-voyage .detail .item {
-  margin-right: 30rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.total-voyage .detail .item .data {
-  color: #7dc5eb;
-  font-size: 40rpx;
-  font-weight: 500;
+.total-voyage .detail .item .title {
+  font-size: 22rpx;
+  color: #666666;
+}
+.total-voyage .detail .item .number {
+  font-size: 38rpx;
+  color: #333333;
+  margin-top: 10rpx;
 }

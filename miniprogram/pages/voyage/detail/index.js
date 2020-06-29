@@ -54,7 +54,7 @@ Page({
    const result = await getTrackDetail(this.data.id)
    const { showDate, shipName, mileage, monitoringList, shipSpotList } = result || {}
    monitoringList.map(x => {
-     x.surveyTime = formatTime(new Date(x.surveyTime), '', false)
+     x.createdTimeFormat = formatTime(new Date(x.createdTimeFormat), '', false)
      return x
    })
    
@@ -86,7 +86,6 @@ Page({
   },
   moreClick(e) {
     const { monitoring } = e.currentTarget.dataset
-    console.log(monitoring)
     wx.$eventBus.$on('refresh_voyage', (obj) => {
       this.initFn()
     })

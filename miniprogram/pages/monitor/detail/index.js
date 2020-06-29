@@ -198,13 +198,13 @@ Page({
   async getMonitorInfo() {
     const _that = this
     const result = await findMonitoringById(this.data.id)
-    const { shipId, resourceType, content, surveyTime, createByName, createdTime } = result || {}
+    const { shipId, resourceType, content, surveyTimeFormat, createByName, createdTimeFormat } = result || {}
     // 调查种类
     const typeIndex = _that.data.monitorTypes.map(x => x.key).indexOf(resourceType)
     // 选择船只
     const trackIndex = _that.data.trackShips.map(x => x.shipId).indexOf(shipId)
     // 监测时间
-    const _surveyTime = formatTime(new Date(surveyTime), '', false)
+    const _surveyTime = formatTime(new Date(surveyTimeFormat), '', false)
     let item = JSON.parse(content || {})
     let _key = ''
     _that.setData({
@@ -237,7 +237,7 @@ Page({
           x.value = createByName
         }
         if (x.attrKey === 'createdTime') {
-          x.value = formatTime(new Date(createdTime), '', false)
+          x.value = formatTime(new Date(createdTimeFormat), '', false)
         }
         if (cells.indexOf(x.attrKey) > -1) {
           x.value = item[x.attrKey]

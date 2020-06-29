@@ -94,12 +94,14 @@ Page({
     } else {
       util.promisify(wx.showModal, {
         title: '提示',
-        content: '您暂无船只权限，请联系管理员',
-        showCancel: false,
-        confirmText: '知道了'
+        content: '您暂跟踪船只，请前往船舶管理设置',
+        showCancel: true,
+        confirmText: '确定'
       }).then(res => {
         if (res.confirm) {
-          console.log('用户点了ok')
+          wx.navigateTo({
+            url: '/pages/ship/list/index'
+          })
         }
       })
     }
@@ -113,15 +115,23 @@ Page({
       longitude
     })
     util.setStorageSync(userInfoKey, user)
-    getShipHistory().then(res => {
-      const _ships = (res || []).filter(x => x.shipId === user.followShipId)
-      let _ship = _ships.length > 0 ? _ships[0] : {}
-      _that.setData({
-        latitude: _ship.latitude || latitude,
-        longitude: _ship.longitude || longitude,
-        markers: _that.shipMarkerData(res) || []
-      })
+    const myShips = await getShipHistory()
+    const _ships = (myShips || []).filter(x => x.shipId === user.followShipId)
+    let _ship = _ships.length > 0 ? _ships[0] : {}
+    _that.setData({
+      latitude: _ship.latitude || latitude,
+      longitude: _ship.longitude || longitude,
+      markers: _that.shipMarkerData(myShips) || []
     })
+    if (!myShips || myShips.length === 0) {
+      util.promisify(wx.showModal, {
+        title: '提示',
+        content: '您暂无跟踪船只，请前往船舶管理设置',
+        showCancel: false,
+        confirmText: '知道了'
+      })
+      return null
+    }
     _that.getCurrentShipPoint()
     this.acceptLocationData(user.pkid)
     return user
@@ -165,14 +175,12 @@ Page({
     let _that = this
     const followShipId = _that.data.followShipId
     websocket.ws_connect(sid,(data)=>{
-      console.log(33333, data)
       const ships = (data || []).filter(x => x.shipId === followShipId)
       const _markers = _that.shipMarkerData(data)
       if (ships && ships.length > 0) {
         const { longitude, latitude } = ships[0]
         const _spotList = _that.data.polyline[0].points
         _spotList.push({ longitude, latitude })
-        console.log('_spotList', _spotList)
         _that.setData({
           longitude,
           latitude,

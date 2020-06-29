@@ -3,5 +3,5 @@
     "navBar": "miniprograms-navigation-bar",
     "s-cell": "/components/cell/index"
   },
-  "disableScroll":true
+  "disableScroll": false
 }

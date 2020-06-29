@@ -41,7 +41,7 @@
             disabled="{{item.readonly}}"
             bindchange="surveyTimeChange"
             start="2020-01-01" 
-            end="{{currentTime}}">{{ surveyTime || '请选择监测日期'}}</picker>
+            end="{{currentTime}}">{{surveyTime || '请选择监测日期'}}</picker>
         </view>
       </s-cell>
     </block>
@@ -74,8 +74,8 @@
       </s-cell>
     </block>
   </view>
-  <view wx:if="{{!isloading}}" class="savebtn">
-    <button wx:if="{{id === 0}}" bindtap="saveShipMonitorInfo" class="save">保存并使用</button>       
+  <view wx:if="{{!isloading && id === 0}}" class="savebtn">
+    <button  bindtap="saveShipMonitorInfo" class="save">保存并使用</button>       
   </view>
 </view>
   

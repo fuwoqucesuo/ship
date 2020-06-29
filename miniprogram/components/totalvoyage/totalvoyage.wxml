@@ -1,9 +1,20 @@
 <view class="total-voyage">
-  <text class="title">累计航程</text>
-  <view class="voyage-info"><text class="voyage">{{totalMileage}}</text>km</view>
+  <view class="top">
+    <view>累计航迹</view>
+    <view>(km)</view>
+  </view>
+  <view class="totalMileage">
+    {{totalMileage}}
+  </view>
   <view class="detail">
-    <text class="item">运行船只: <text class="data">{{totalTrackCount}}</text>航次</text>
-    <text class="item">监测数据: <text class="data">{{totalMonitoringCount}}</text>批次</text>
+    <view class="item">
+      <view class="title">运行船只(航次)</view>
+      <view class="number">{{totalTrackCount}}</view>
+    </view>
+    <view class="item">
+      <view class="title">监测数据(批次)</view>
+      <view class="number">{{totalMonitoringCount}}</view>
+    </view>
   </view>
 </view>
   

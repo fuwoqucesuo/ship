@@ -21,6 +21,7 @@ const ws_connect = (sid,reMsg)=>{
   sotk.onClose(onClose => {
     socketOpen = false;
     console.log('监听 WebSocket 连接关闭事件。', onClose)
+    ws_connect()
   })
   sotk.onError(onError => {
     socketOpen = true;
