@@ -23,11 +23,12 @@ Page({
   },
   async initFn() {
     const _that = this
-    let userShipIds = ''
-    if (_that.uPkid) {
-      const _currentUser = await getCurrentUserDetail(_that.uPkid)
+    let userShipIds = []
+    if (_that.data.uPkid) {
+      const _currentUser = await getCurrentUserDetail(_that.data.uPkid)
       userShipIds = (_currentUser || {}).userShipIds || ''
     }
+    console.log(userShipIds)
     const ships = await selectWorkingShipList()
     const _cells = ships.map(x => {
       x.isInput = false

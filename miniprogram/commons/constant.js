@@ -161,6 +161,7 @@ export const userOps = [
     isInput: false,
     canShow: true,
     iconmore: true,
+    readonly: false,
     attrKey: 'userShipIds'
   }
 ]
@@ -268,7 +269,7 @@ export const fishType = [
     canShow: false,
     iconmore: false,
     readonly: false,
-    placeholder: '请输入旧密码',
+    placeholder: '',
     value: '',
     maxlength: 20,
     attrKey: 'createByName'
@@ -276,13 +277,13 @@ export const fishType = [
   {
     id: 6,
     title: '记录时间：',
-    isInput: false,
+    isInput: true,
     canShow: false,
     iconmore: false,
     readonly: false,
     value: '',
     maxlength: 20,
-    attrKey: 'surveyTime'
+    attrKey: 'createdTime'
   }
 ]
 
@@ -368,13 +369,13 @@ export const initType = [
   {
     id: 7,
     title: '记录时间：',
-    isInput: false,
+    isInput: true,
     canShow: false,
     iconmore: false,
     readonly: false,
     value: '',
     maxlength: 20,
-    attrKey: 'surveyTime'
+    attrKey: 'createdTime'
   }
 ]
 
@@ -396,12 +397,12 @@ export const environmentType = [
   {
     id: 2,
     title: '水质因子：',
-    placeholder: '请输入水质因子',
-    isInput: true,
+    placeholder: '',
+    isInput: false,
+    isTextarea: true,
     canShow: true,
     iconmore: false,
     readonly: false,
-    
     value: '',
     maxlength: 200,
     attrKey: 'water_quality_factors'
@@ -409,7 +410,7 @@ export const environmentType = [
   {
     id: 3,
     title: '浮游植物：',
-    placeholder: '请输入浮游植物',
+    placeholder: '请输入浮游植物监测数据',
     isInput: true,
     canShow: true,
     iconmore: false,
@@ -422,7 +423,7 @@ export const environmentType = [
   {
     id: 4,
     title: '浮游动物：',
-    placeholder: '请输入浮游动物',
+    placeholder: '请输入浮游动物监测数据',
     isInput: true,
     canShow: true,
     iconmore: false,
@@ -435,7 +436,7 @@ export const environmentType = [
   {
     id: 6,
     title: '低栖动物：',
-    placeholder: '请输入低栖动物',
+    placeholder: '请输入低栖动物监测数据',
     isInput: true,
     canShow: true,
     iconmore: false,
@@ -448,7 +449,7 @@ export const environmentType = [
   {
     id: 6,
     title: '周丛生物：',
-    placeholder: '请输入周丛生物',
+    placeholder: '请输入周丛生物监测数据',
     isInput: true,
     canShow: true,
     iconmore: false,
@@ -461,7 +462,7 @@ export const environmentType = [
   {
     id: 7,
     title: '漂浮生物：',
-    placeholder: '请输入漂浮生物',
+    placeholder: '请输入漂浮生物监测数据',
     isInput: true,
     canShow: true,
     iconmore: false,
@@ -473,7 +474,7 @@ export const environmentType = [
   {
     id: 8,
     title: '水生植物：',
-    placeholder: '请输入水生植物',
+    placeholder: '请输入水生植物监测数据',
     isInput: true,
     canShow: true,
     iconmore: false,
@@ -490,7 +491,6 @@ export const environmentType = [
     canShow: false,
     iconmore: false,
     readonly: false,
-    
     value: '马化腾',
     maxlength: 20,
     attrKey: 'createByName'
@@ -498,16 +498,21 @@ export const environmentType = [
   {
     id: 10,
     title: '记录时间：',
-    isInput: false,
+    isInput: true,
     canShow: false,
     iconmore: false,
     readonly: false,
     value: '',
     maxlength: 20,
-    attrKey: 'surveyTime'
+    attrKey: 'createdTime'
   }
 ]
 
+export const monitorKeys = {
+  fishType: ['fish_kind', 'fish_count', 'fish_weight'],
+  initType: ['spawn_count', 'fries_count', 'net_count', 'net_period'],
+  environmentType: ['water_quality_factors', 'neuston', 'zooplankton', 'zoobenthos', 'periphyton', 'hytoplankton', 'hydrophyte']
+}
 // 船舶
 export const shipOps = [
   {
@@ -592,6 +597,19 @@ export const shipOps = [
   },
   {
     id: 11,
+    title: 'GPS电量：',
+    maxlength: 5,
+    attrKey: 'gpsEnergy',
+    isSlot: true,
+    iconClass: '',
+    isInput: false,
+    canShow: false,
+    iconmore: false,
+    readonly: true,
+    value: ''
+  },
+  {
+    id: 12,
     title: '船舶状态：',
     maxlength: 5,
     attrKey: 'status',

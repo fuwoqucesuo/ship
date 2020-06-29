@@ -1,4 +1,5 @@
 const { getTrackDetail } = require('../../../commons/sApi')
+const { formatTime } = require('../../../commons/utils')
 Page({
 
   /**
@@ -6,6 +7,7 @@ Page({
    */
   data: {
     tabs: ['航迹记录', '监测记录'],
+    scale: 15,
     voyageTime: '',
     shipName: '',
     mileage: 0,
@@ -14,32 +16,13 @@ Page({
     monitoringList: null,
     current: {},
     polyline: [{
-      points: [
-        {
-          longitude: 121.44577861,
-          latitude: 37.48205260
-        }, {
-          longitude: 121.44611657,
-          latitude: 37.48207388
-        }, {
-          longitude: 121.44725382,
-          latitude: 37.48224841
-        }, {
-          longitude: 121.44766152,
-          latitude: 37.48237186
-        },{
-          longitude: 121.4475274100,
-          latitude: 37.4827039000
-        },{
-          longitude: 121.44748986,
-          latitude: 37.48299336
-        }
-      ],
+      points: [],
       color: "#33c9FF",
-      width: 3,
+      width: 5,
       dottedLine: false,
       arrowLine: true
-    }]
+    }],
+    id: 0
   },
   handlerGobackClick() {
     wx.navigateBack({
@@ -51,18 +34,38 @@ Page({
    */
   onLoad: function (options) {
     const id = options.id
-    this.initFn(id)
+    this.setData({
+      id
+    })
+    this.initFn()
   },
-  async initFn(id) {
-   const result = await getTrackDetail(id)
+  getScale(mileage) {
+    let _scale = 15
+    if (mileage < 5) {
+      _scale = 16
+    } else if (mileage > 50 && mileage < 100) {
+      _scale = 14
+    } else if (mileage > 100) {
+      _scale = 13
+    }
+    return _scale
+  },
+  async initFn() {
+   const result = await getTrackDetail(this.data.id)
    const { showDate, shipName, mileage, monitoringList, shipSpotList } = result || {}
+   monitoringList.map(x => {
+     x.surveyTime = formatTime(new Date(x.surveyTime), '', false)
+     return x
+   })
+   
    this.setData({
     voyageTime: showDate,
     shipName: shipName,
     monitoringList,
     mileage,
+    scale: this.getScale(mileage),
     current: shipSpotList && shipSpotList.length > 0 ? shipSpotList[0] : {},
-    ['polyline[0].points']: shipSpotList.map(x => {
+    ['polyline[0].points']: shipSpotList.reverse().map(x => {
       return {
         longitude: x.longitude,
         latitude: x.latitude
@@ -80,6 +83,16 @@ Page({
     this.setData({
       currentIndex: index
     })
+  },
+  moreClick(e) {
+    const { monitoring } = e.currentTarget.dataset
+    console.log(monitoring)
+    wx.$eventBus.$on('refresh_voyage', (obj) => {
+      this.initFn()
+    })
+    wx.navigateTo({
+      url: `/pages/monitor/detail/index?id=${monitoring.pkid}`
+    });
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

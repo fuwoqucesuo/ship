@@ -187,6 +187,15 @@ export const getShipHistory = () => {
 }
 
 /**
+ * 重置用户密码
+ */
+export const resetPassword = (ops) => {
+  return wx.sRequest(`${apiHost}${apis.resetPassword}`, ops, {
+    method: 'POST'
+  }).catch(err => {})
+}
+
+/**
  * 上传图片
  * @param {*} path 
  */
@@ -202,4 +211,13 @@ export const uploadImg = (path) => {
     }
   }, 'uploadFile').catch((e) => {})
 }
-
+/**
+ * 退出登录
+ * @param {*} access_token 
+ * @param {*} openid 
+ */
+export const userLogout = (access_token,openid) => {
+  return wx.sRequest(`${apiHost}${apis.userLogout}?access_token=${access_token}&openid=${openid}`, {},{
+    method: 'DELETE'
+  })
+}
